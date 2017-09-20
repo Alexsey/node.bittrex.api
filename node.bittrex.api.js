@@ -39,9 +39,21 @@ var NodeBittrexApi = function() {
     inverse_callback_arguments: false,
   };
 
+  var lastNonce = [+new Date / 1000 | 0, 0];
   var getNonce = function() {
-    return Math.floor(new Date().getTime() / 1000);
-  };
+    var now = +new Date / 1000 | 0;
+    if (lastNonce[0] == now) {
+      lastNonce[1]++;
+    } else {
+      lastNonce[0] = now;
+      lastNonce[1] = 0;
+    }
+    return lastNonce[0] + padZeros(lastNonce[1]);
+
+    function padZeros(str) {
+      return ('000' + str).slice(-3);
+    }
+  }
 
   var extractOptions = function(options) {
     var o = Object.keys(options),
