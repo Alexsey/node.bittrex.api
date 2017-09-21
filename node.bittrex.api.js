@@ -39,23 +39,19 @@ var NodeBittrexApi = function() {
     inverse_callback_arguments: false,
   };
 
-  var lastNonces = [];
+var lastNonce = 0
 
-  var getNonce = function() {
-    var nonce = new Date().getTime();
+function getNonce () {
+  var now = +[new Date().getTime(), process.hrtime()[1]].join('');
 
-    if (lastNonces.indexOf(nonce) > -1) {
-      // we already used this nonce so keep trying to get a new one.
-      return getNonce();
-    }
+  if (now <= lastNonce) {
+    return getNonce();
+  }
 
-    // keep the last X to try ensure we don't have collisions even if the clock is adjusted
-    lastNonces = lastNonces.slice(-50);
+  lastNonce = now
 
-    lastNonces.push(nonce);
-
-    return nonce;
-  };
+  return now;
+}
 
   var extractOptions = function(options) {
     var o = Object.keys(options),
